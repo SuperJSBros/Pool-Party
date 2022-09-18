@@ -1,0 +1,24 @@
+{
+  "name": "wincho-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "wincho:test": "node wincho-bot-log-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exomachine/wincho-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/exomachine/wincho-bot/issues"
+  },
+  "homepage": "https://github.com/exomachine/wincho-bot#readme",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
+  },
+  "description": ""
+}
