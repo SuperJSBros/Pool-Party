@@ -16,7 +16,9 @@ client.on("messageCreate", (message) => {
     if (message.content.toLowerCase().search(regex) >= 0 || message.content.toLowerCase().search(/@wincho/) >= 0) {
       console.log("got message");
       // message.reply("Bruh");
-      if (Math.floor(Math.random(10) === 7 )) message.reply("Bruh"); 
+      let rando = Math.floor(Math.random(10)*10); //prevent abuse by Joey
+      console.log(`rolled :`, rando);
+      if (rando === 7 ) message.reply("Bruh"); 
     }
   } else {
     console.log("got commande line");
