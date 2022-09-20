@@ -8,15 +8,15 @@ console.log("bot online")
 client.on("messageCreate", (message) => {
   //if the message is from a bot, ignore it
   console.log(`got a message : ${message.content}`);
-  console.log(message);
+
   if (message.author.bot) return;
   //bot on demande commande start with prefix ! , below code are always-on
   if (!message.content.startsWith(prefix)) {
     const regex = /wincho/;
     if (message.content.toLowerCase().search(regex) >= 0 || message.content.toLowerCase().search(/@wincho/) >= 0) {
       console.log("got message");
-      message.reply("Bruh");
-       //if (Math.floor(Math.random(10) === 7 )  message.reply("Bruh");
+      // message.reply("Bruh");
+      if (Math.floor(Math.random(10) === 7 )) message.reply("Bruh"); 
     }
   } else {
     console.log("got commande line");
