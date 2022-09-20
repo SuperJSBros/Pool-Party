@@ -1,5 +1,5 @@
 require("dotenv").config(); //moved bot token to use dotenv
-//console.log(process.env);
+console.log(process.env);
 const Discrod = require("discord.js");
 const client = new Discrod.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const prefix = "!";
@@ -33,5 +33,5 @@ function processBotCommande(message) {
 }
 
 
-client.login("MTAyMTIzODU5MDc3NDE5NDI2OQ.GbjtFX.ey-YbNVToK2x1uhJ_y_9UaiXNKW8CiZGHrbEgk");
+client.login(process.env.BOT_TOKEN);
 
