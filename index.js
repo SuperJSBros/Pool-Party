@@ -1,5 +1,5 @@
 require("dotenv").config(); //moved bot token to use dotenv
-// console.log(process.env);
+//console.log(process.env);
 const Discrod = require("discord.js");
 const client = new Discrod.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const prefix = "!";
@@ -11,7 +11,9 @@ client.on("messageCreate", (message) => {
   if (!message.content.startsWith(prefix)) {
     const regex = /wincho/;
     if (message.toLowerCase().search(regex) >= 0 || message.toLowerCase().search(/@wincho/) >= 0) {
-      if (Math.floor(Math.random(10) === 7 )  return "bruh";
+       message.reply("Bruh");
+       //if (Math.floor(Math.random(10) === 7 )  message.reply("Bruh");
+
     }
   } else {
     processBotCommande(message);
@@ -30,4 +32,6 @@ function processBotCommande(message) {
   }
 }
 
-client.login(process.env.BOT_TOKEN);
+
+client.login("MTAyMTIzODU5MDc3NDE5NDI2OQ.GbjtFX.ey-YbNVToK2x1uhJ_y_9UaiXNKW8CiZGHrbEgk");
+
