@@ -1,21 +1,25 @@
 require("dotenv").config(); //moved bot token to use dotenv
-console.log(process.env);
+//console.log(process.env);
 const Discrod = require("discord.js");
 const client = new Discrod.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const prefix = "!";
+console.log("bot online")
 
 client.on("messageCreate", (message) => {
   //if the message is from a bot, ignore it
+  console.log(`got a message : ${message.content}`);
+  console.log(message);
   if (message.author.bot) return;
   //bot on demande commande start with prefix ! , below code are always-on
   if (!message.content.startsWith(prefix)) {
     const regex = /wincho/;
-    if (message.toLowerCase().search(regex) >= 0 || message.toLowerCase().search(/@wincho/) >= 0) {
-       message.reply("Bruh");
+    if (message.content.toLowerCase().search(regex) >= 0 || message.content.toLowerCase().search(/@wincho/) >= 0) {
+      console.log("got message");
+      message.reply("Bruh");
        //if (Math.floor(Math.random(10) === 7 )  message.reply("Bruh");
-
     }
   } else {
+    console.log("got commande line");
     processBotCommande(message);
   }
 });
