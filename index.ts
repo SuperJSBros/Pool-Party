@@ -11,11 +11,12 @@ import {
   Routes,
   Partials,
 } from "discord.js"
-import * as dotenv from "dotenv"
 
-// init config
+import * as dotenv from "dotenv"
+// init dotenv config
 dotenv.config({ path: __dirname + "/.env" })
 
+// create new discord client with permission
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -123,15 +124,19 @@ client.on("interactionCreate", async (interaction) => {
         .setStyle(TextInputStyle.Short)
         .setRequired(true)
 
+      const date = new Date(Date.now())
+      const dateText = date.getDate().toString() + (date.getMonth()+1) + date.getFullYear()
       const dateInput = new TextInputBuilder()
         .setCustomId("dateInput")
-        .setLabel("Date of the event")
+        .setLabel("Date of the event (DDMMYYYY)")
         .setMinLength(8)
         .setMaxLength(8)
         .setStyle(TextInputStyle.Short)
         .setPlaceholder("DDMMYYYY")
         .setRequired(true)
-
+        .setValue(dateText)  //autocomplete current day
+      
+      const timeText = date.getHours().toString() + ":" + date.getMinutes()
       const timeInput = new TextInputBuilder()
         .setCustomId("timeInput")
         .setLabel("Time of the event")
@@ -140,6 +145,7 @@ client.on("interactionCreate", async (interaction) => {
         .setStyle(TextInputStyle.Short)
         .setPlaceholder("HH:MM")
         .setRequired(true)
+        .setValue(timeText) //auto complete current time
 
       const minNumberOfPeopleInput = new TextInputBuilder()
         .setCustomId("peopleInput")
