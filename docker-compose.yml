@@ -1,4 +1,9 @@
 version: '3'
 services:
   discord-bot:
+    container_name: Pool-Party
     build: discord-bot
+    volumes:
+      - '.env:/usr/src/app/.env'
+    #command: npm start  #commande moved to Dockerfile
+
