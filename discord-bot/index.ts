@@ -1,7 +1,8 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Interaction } from "discord.js";
 import * as dotenv from "dotenv";
-import { poolPartyEventService } from "./services/event-service";
-import { poolPartyBotCommandsService } from "./services/command-service";
+import { eventService } from "./services/event-service";
+import { commandService } from "./services/command-service";
+
 // init dotenv config
 dotenv.config({ path: __dirname + "/.env" });
 
@@ -22,24 +23,23 @@ const client = new Client({
 // *********************
 // Subscribe to events
 // *********************
-client.once("ready", async (currClient) => {
+client.once("ready", async (currClient:Client) => {
   console.log("Pool-part bot is online");
-  const commands = await poolPartyBotCommandsService.createAndUpdateCommands(
+  const commands = await commandService.createAndUpdateCommands(
     currClient
   );
   console.log("Current commands", commands);
 });
 
-client.on("interactionCreate", async (interaction) => {
+client.on("interactionCreate", async (interaction:Interaction) => {
   if (interaction.isModalSubmit()) {
-    await poolPartyEventService.handleEventFormSubmission(interaction);
+    await eventService.handleEventFormSubmission(interaction);
   } else if (
     interaction.isChatInputCommand() &&
     interaction.commandName === "create-event"
   ) {
     try {
-      // Create the modal
-      await poolPartyEventService.showEventSubmissionForm(interaction);
+      await eventService.showEventSubmissionForm(interaction);
     } catch (err: any) {
       console.error(err);
     }

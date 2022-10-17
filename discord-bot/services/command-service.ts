@@ -5,7 +5,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-class PoolPartyBotCommandsService {
+class CommandService {
   /**
    * This function creates and updates all current application commands for the current discord bot
    * @param currClient application client
@@ -30,5 +30,5 @@ class PoolPartyBotCommandsService {
     return commands;
   }
 }
-export const poolPartyBotCommandsService: PoolPartyBotCommandsService =
-  new PoolPartyBotCommandsService();
+export const commandService: CommandService =
+  new CommandService();

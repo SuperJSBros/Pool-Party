@@ -9,7 +9,7 @@ import {
   TextInputStyle,
 } from "discord.js";
 
-class PoolPartyBotEventService {
+class EventService {
   /**
    * This function displays the event submission form to the requester
    * @param interaction
@@ -153,5 +153,5 @@ class PoolPartyBotEventService {
   }
 }
 
-export const poolPartyEventService: PoolPartyBotEventService =
-  new PoolPartyBotEventService();
+export const eventService: EventService =
+  new EventService();
