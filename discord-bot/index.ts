@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import * as dotenv from "dotenv";
-import { poolPartyEventService } from "./event-service";
-import { poolPartyBotCommandsService } from "./command-service";
+import { poolPartyEventService } from "./services/event-service";
+import { poolPartyBotCommandsService } from "./services/command-service";
 // init dotenv config
 dotenv.config({ path: __dirname + "/.env" });
 
@@ -31,7 +31,6 @@ client.once("ready", async (currClient) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-  console.log(interaction);
   if (interaction.isModalSubmit()) {
     await poolPartyEventService.handleEventFormSubmission(interaction);
   } else if (
