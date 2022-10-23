@@ -52,15 +52,28 @@ class EventService {
           ],
         });
       } else {
-        // Success
-        await interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor("Green")
-              .setDescription("Your submission was received successfully!"),
-          ],
-        });
-        await this.createEventAndThread(interaction);
+        try {
+          await this.createEventAndThread(interaction);
+          // Success
+          await interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setColor("Green")
+                .setDescription("Your submission was received successfully!"),
+            ],
+          });
+        } catch (e: any) {
+          console.error(e.message);
+          await interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setColor("Red")
+                .setDescription(
+                  `Something went wrong during your submission, please try again later`
+                ),
+            ],
+          });
+        }
       }
     }
   }
@@ -73,25 +86,27 @@ class EventService {
       /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/
     );
 
-    const dateValue = interaction.fields.getTextInputValue(
+    const dateInput = interaction.fields.getTextInputValue(
       this._modalReference.dateInputId
     );
-    const timeValue = interaction.fields.getTextInputValue(
+    const timeInput = interaction.fields.getTextInputValue(
       this._modalReference.timeInputId
     );
-    let minPeopleValue = interaction.fields.getTextInputValue(
+    let minPeopleInput = interaction.fields.getTextInputValue(
       this._modalReference.minPeopleInputId
     );
+    const eventDate = this.createDateFromInputs(dateInput, timeInput);
 
     // validate inputs
     let errorMsg: string[] = [];
-    console.log(dateValue + ":", dateRgx.test(dateValue));
-    if (!dateRgx.test(dateValue))
-      errorMsg.push(`Invalid date value: ${dateValue}`);
-    if (!timeRgx.test(timeValue))
-      errorMsg.push(`Invalid time value: ${timeValue}`);
-    if (isNaN(Number(minPeopleValue)))
-      errorMsg.push(`Invalid number value: ${minPeopleValue}`);
+    if (!dateRgx.test(dateInput))
+      errorMsg.push(`Invalid date value: ${dateInput}`);
+    if (!timeRgx.test(timeInput))
+      errorMsg.push(`Invalid time value: ${timeInput}`);
+    if (eventDate < new Date())
+      errorMsg.push(`DateTime value must be in the future`);
+    if (isNaN(Number(minPeopleInput)))
+      errorMsg.push(`Invalid number value: ${minPeopleInput}`);
 
     return errorMsg;
   }
@@ -110,22 +125,26 @@ class EventService {
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
 
-    const dateNow = new Date();
+    const dateNow = new Date(Date.now() + 5 * 60000);
     const defaultDate: string = dateNow.toLocaleDateString("en-GB");
     const dateInput = new TextInputBuilder()
       .setCustomId(this._modalReference.dateInputId)
       .setLabel("Date of the event (DD/MM/YYYY)")
+      .setMinLength(10)
       .setMaxLength(10)
       .setStyle(TextInputStyle.Short)
       .setPlaceholder("DD/MM/YYYY")
       .setRequired(true)
       .setValue(defaultDate); //autocomplete current day
 
-    const defaultTime: string =
-      dateNow.getHours().toString() + ":" + dateNow.getMinutes();
+    const hours = (dateNow.getHours() < 10 ? "0" : "") + dateNow.getHours(); // ensure format mm
+    const minutes =
+      (dateNow.getMinutes() < 10 ? "0" : "") + dateNow.getMinutes(); // ensure format mm
+    const defaultTime: string = hours + ":" + minutes;
     const timeInput = new TextInputBuilder()
       .setCustomId(this._modalReference.timeInputId)
       .setLabel("Time of the event (HH:MM)")
+      .setMinLength(5)
       .setMaxLength(5)
       .setStyle(TextInputStyle.Short)
       .setPlaceholder("HH:MM")
@@ -186,54 +205,103 @@ class EventService {
     const eventDescription = interaction.fields.getTextInputValue(
       this._modalReference.descriptionInputId
     );
+    const minPeopleInput = interaction.fields.getTextInputValue(
+      this._modalReference.minPeopleInputId
+    );
     const dateInput = interaction.fields.getTextInputValue(
       this._modalReference.dateInputId
     );
-    const dateStr = dateInput.split("/").reverse().join("-")
-    const timeStr = interaction.fields.getTextInputValue(
+    const timeInput = interaction.fields.getTextInputValue(
       this._modalReference.timeInputId
     );
 
-    // Only the ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ) is explicitly specified to be supported.  
-    const eventStartDate = new Date(Date.parse(`${dateStr}T${timeStr}`));
+    const eventStartDate = this.createDateFromInputs(dateInput, timeInput);
     const requester = interaction.user.username;
+
+    const event = await this.postEvent(
+      interaction,
+      eventName,
+      eventStartDate,
+      eventDescription
+    );
+    await this.postMsgAndThread(
+      interaction,
+      requester,
+      eventDescription,
+      eventName,
+      minPeopleInput
+    );
+
+    // TODO: use postgresql here
+    console.log(event);
+  }
+
+  private async postEvent(
+    interaction: ModalSubmitInteraction,
+    eventName: string,
+    eventStartDate: Date,
+    eventDescription: string
+  ) {
+    return await interaction.client.rest.post(
+      Routes.guildScheduledEvents(String(process.env.SERVER_ID)),
+      {
+        body: {
+          channel_id: process.env.VOICE_CHANNEL_ID,
+          name: eventName,
+          privacy_level: 2,
+          scheduled_start_time: eventStartDate,
+          description: eventDescription,
+          entity_type: 2,
+        },
+      }
+    );
+  }
+
+  private async postMsgAndThread(
+    interaction: ModalSubmitInteraction,
+    requester: string,
+    eventDescription: string,
+    eventName: string,
+    minPeopleInput: string
+  ) {
+    const numOfPeople = Number(minPeopleInput);
     const message: any = await interaction.client.rest.post(
-      Routes.channelMessages(String(process.env.CHANNEL_ID)),
+      Routes.channelMessages(String(process.env.THREAD_CHANNEL_ID)),
       {
         body: {
           content: `${requester} created an event! Show your interest by reacting 🔥🚀, chatting 🗣️ and subscribing to the event's notifications 🔔\n`,
           tts: false,
-          embeds: eventDescription?[
-            new EmbedBuilder()
-            .setColor("Blue")
-            .setDescription(
-              `Description: ${eventDescription}`
-            ),
-          ]:[],
+          embeds: eventDescription
+            ? [
+                new EmbedBuilder()
+                  .setColor("Blue")
+                  .setDescription(
+                    `Description: ${eventDescription}` +
+                      (numOfPeople ? `\nCapacity: ${numOfPeople}` : "")
+                  ),
+              ]
+            : [],
         },
       }
     );
     await interaction.client.rest.post(
-      Routes.threads(String(process.env.CHANNEL_ID), message.id),
+      Routes.threads(String(process.env.THREAD_CHANNEL_ID), message.id),
       {
         body: {
           name: eventName,
         },
       }
     );
-    await interaction.client.rest.post(
-      Routes.guildScheduledEvents(String(process.env.SERVER_ID)),
-      {     
-        body:  {
-          channel_id: "1026208155681702031",
-          name:eventName,
-          privacy_level: 2,
-          scheduled_start_time: eventStartDate,
-          description:eventDescription,
-          entity_type: 2
-        }
-      }
-    );
+  }
+  private createDateFromInputs(dateInput: string, timeInput: string): Date {
+    const dateStr = dateInput.split("/").reverse().join("-"); // convert to accepted format
+    const timeStr = timeInput
+      .split(":")
+      .map((val) => (val.length < 2 ? "0" + val : val))
+      .join(":");
+    // Only the ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ) is explicitly specified to be supported.
+    const eventStartDate = new Date(Date.parse(`${dateStr}T${timeStr}`));
+    return eventStartDate;
   }
 }
 
