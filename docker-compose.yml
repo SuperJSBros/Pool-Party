@@ -17,6 +17,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB} #optional (specify default database instead of $POSTGRES_DB)
     volumes:
       - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     restart: always
 
   pgadmin:
