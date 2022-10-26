@@ -1,6 +1,6 @@
 {
   "name": "pool-party-bot",
-  "version": "1.0.0",
+  "version": "0.1",
   "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/exomachine/wincho-bot.git"
+    "url": "git+https://github.com/SuperJSBros/Pool-Party.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/exomachine/wincho-bot/issues"
+    "url": "https://github.com/SuperJSBros/Pool-Party/issues"
   },
-  "homepage": "https://github.com/exomachine/wincho-bot#readme",
+  "homepage": "https://github.com/SuperJSBros/Pool-Party#readme",
   "dependencies": {
     "discord.js": "14.5.0",
     "dotenv": "^16.0.0",
