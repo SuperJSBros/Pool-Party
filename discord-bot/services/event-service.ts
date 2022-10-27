@@ -2,13 +2,16 @@ import {
   ActionRowBuilder,
   CommandInteraction,
   EmbedBuilder,
+  GuildScheduledEvent,
+  Message,
   ModalActionRowComponentBuilder,
   ModalBuilder,
   ModalSubmitInteraction,
   Routes,
   TextInputBuilder,
-  TextInputStyle,
+  TextInputStyle
 } from "discord.js";
+import { eventRepository } from "../repository/event-repository";
 
 class EventService {
   private _modalReference = {
@@ -224,24 +227,25 @@ class EventService {
       eventStartDate,
       eventDescription
     );
-    await this.postMsgAndThread(
+    const message = await this.postMsgAndThread(
       interaction,
       requester,
       eventDescription,
       eventName,
       minPeopleInput
     );
-
-    // TODO: use postgresql here
-    console.log(event);
+    // create db event
+    eventRepository.createEvent(event, minPeopleInput, eventStartDate, interaction.user.id, message.id);
   }
+
+
 
   private async postEvent(
     interaction: ModalSubmitInteraction,
     eventName: string,
     eventStartDate: Date,
     eventDescription: string
-  ) {
+  ):Promise<GuildScheduledEvent> {
     return await interaction.client.rest.post(
       Routes.guildScheduledEvents(String(process.env.SERVER_ID)),
       {
@@ -254,7 +258,7 @@ class EventService {
           entity_type: 2,
         },
       }
-    );
+    ) as Promise<GuildScheduledEvent>;
   }
 
   private async postMsgAndThread(
@@ -263,7 +267,7 @@ class EventService {
     eventDescription: string,
     eventName: string,
     minPeopleInput: string
-  ) {
+  ):Promise<Message> {
     const numOfPeople = Number(minPeopleInput);
     const message: any = await interaction.client.rest.post(
       Routes.channelMessages(String(process.env.THREAD_CHANNEL_ID)),
@@ -292,7 +296,9 @@ class EventService {
         },
       }
     );
+    return message;
   }
+
   private createDateFromInputs(dateInput: string, timeInput: string): Date {
     const dateStr = dateInput.split("/").reverse().join("-"); // convert to accepted format
     const timeStr = timeInput

@@ -1,9 +1,9 @@
 import { Client } from "pg";
 
 class EventRepository {
-  private dbClient?: Client = undefined;
+  public dbClient!: Client;
   constructor() {}
-  public initDbConnection():void {
+  public initDbConnection(): void {
     const config = {
       host: process.env.POSTGRES_HOST,
       database: process.env.POSTGRES_DB,
@@ -12,7 +12,9 @@ class EventRepository {
       password: process.env.POSTGRES_PW,
     };
     if (this.dbClient) {
-      console.log(`A connection to DB ${config.database} has already been established`);
+      console.log(
+        `A connection to DB ${config.database} has already been established`
+      );
       return;
     }
 
@@ -26,6 +28,35 @@ class EventRepository {
         );
       })
       .catch((e) => console.error(e));
+  }
+
+  public createEvent(
+    event,
+    minPeopleInput: string,
+    eventStartDate: Date,
+    userId: string,
+    messageId: string
+  ) {
+    eventRepository.dbClient
+      .query(
+        `
+    INSERT INTO public.event (
+      "EventID",
+      "EventName",
+      "Description",
+      "MinPeople",
+      "StartTime",
+      "OrganizerID",
+      "MessageID"
+      )
+      VALUES(${event.id},'${event.name}','${
+          event.description
+        }',${minPeopleInput},'${eventStartDate.toISOString()}',${userId},${messageId});
+    `
+      )
+      .then((result) => {
+        console.log(result);
+      });
   }
 }
 
