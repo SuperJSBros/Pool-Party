@@ -1,3 +1,4 @@
+import { GuildScheduledEvent } from "discord.js";
 import { Client } from "pg";
 
 class EventRepository {
@@ -31,16 +32,16 @@ class EventRepository {
   }
 
   public createEvent(
-    event,
+    event:GuildScheduledEvent,
     minPeopleInput: string,
     eventStartDate: Date,
     userId: string,
     messageId: string
   ) {
-    eventRepository.dbClient
+    this.dbClient
       .query(
         `
-    INSERT INTO public.event (
+    INSERT INTO public."Event"(
       "EventID",
       "EventName",
       "Description",
@@ -49,10 +50,14 @@ class EventRepository {
       "OrganizerID",
       "MessageID"
       )
-      VALUES(${event.id},'${event.name}','${
-          event.description
-        }',${minPeopleInput},'${eventStartDate.toISOString()}',${userId},${messageId});
-    `
+      VALUES(
+        ${event.id},
+        '${event.name}',
+        '${event.description}',
+        ${minPeopleInput},
+        '${eventStartDate.toISOString()}',
+        ${userId},
+        ${messageId});`
       )
       .then((result) => {
         console.log(result);
