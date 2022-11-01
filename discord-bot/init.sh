@@ -17,12 +17,8 @@ CREATE TABLE IF NOT EXISTS public.organiser (    \
     organiser_reputation integer,                \
     PRIMARY KEY (id)                             \
 );"
-#create relationship
-psql -c "                                                           \
-ALTER TABLE public.event                                            \
-    ADD CONSTRAINT fk_organiser FOREIGN KEY (organiser_id)          \
-    REFERENCES public.organiser (id) MATCH SIMPLE;"
-#create index
-psql -c "                                         \
-CREATE INDEX IF NOT EXISTS fki_fk_organiser       \
-    ON public.event(organiser_id);"
+# #create relationship
+psql -c "ALTER TABLE public.event DROP CONSTRAINT IF EXISTS fk_organiser;"  
+psql -c "ALTER TABLE public.event ADD CONSTRAINT fk_organiser FOREIGN KEY (organiser_id) REFERENCES public.organiser (id) MATCH SIMPLE;"
+# #create index
+psql -c "CREATE INDEX IF NOT EXISTS fki_fk_organiser ON public.event(organiser_id);"
