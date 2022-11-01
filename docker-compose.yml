@@ -3,10 +3,17 @@ services:
 
   discord-bot:
     container_name: pool-party-bot
+    depends_on:
+      - db
     build: discord-bot
+    environment:
+      - PGHOST=${POSTGRES_HOST}
+      - PGUSER=${POSTGRES_USER}
+      - PGPASSWORD=${POSTGRES_PW}
+      - PGDATABASE=${POSTGRES_DB}
     volumes:
       - '.env:/usr/src/app/.env'
-    #command: npm start  #commande moved to Dockerfile
+    command: sh -c "/usr/src/app/init.sh && npm start" #run init script and start bot
 
   db:
     container_name: postgres
