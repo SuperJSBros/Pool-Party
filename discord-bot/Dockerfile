@@ -18,7 +18,6 @@ COPY . .
 
 
 #  CONFIG DATABASE
-ENV PGPASSWORD=$POSTGRES_PW
 RUN apk add postgresql-client
 COPY init.sh /usr/src/app
 ENTRYPOINT []
