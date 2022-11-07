@@ -30,5 +30,4 @@ class CommandService {
     return commands;
   }
 }
-export const commandService: CommandService =
-  new CommandService();
+export const commandService: CommandService = new CommandService();

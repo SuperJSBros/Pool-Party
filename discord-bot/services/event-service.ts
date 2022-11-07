@@ -9,7 +9,7 @@ import {
   ModalSubmitInteraction,
   Routes,
   TextInputBuilder,
-  TextInputStyle
+  TextInputStyle,
 } from "discord.js";
 import { eventRepository } from "../repository/event-repository";
 
@@ -232,21 +232,25 @@ class EventService {
       requester,
       eventDescription,
       eventName,
-      minPeopleInput
+      Number(minPeopleInput)
     );
     // create db event
-    eventRepository.createEvent(event, minPeopleInput, eventStartDate, interaction.user, message.id);
+    eventRepository.createEvent(
+      event,
+      Number(minPeopleInput),
+      eventStartDate,
+      interaction.user,
+      message.id
+    );
   }
-
-
 
   private async postEvent(
     interaction: ModalSubmitInteraction,
     eventName: string,
     eventStartDate: Date,
     eventDescription: string
-  ):Promise<GuildScheduledEvent> {
-    return await interaction.client.rest.post(
+  ): Promise<GuildScheduledEvent> {
+    return (await interaction.client.rest.post(
       Routes.guildScheduledEvents(String(process.env.SERVER_ID)),
       {
         body: {
@@ -258,7 +262,7 @@ class EventService {
           entity_type: 2,
         },
       }
-    ) as Promise<GuildScheduledEvent>;
+    )) as Promise<GuildScheduledEvent>;
   }
 
   private async postMsgAndThread(
@@ -266,9 +270,8 @@ class EventService {
     requester: string,
     eventDescription: string,
     eventName: string,
-    minPeopleInput: string
-  ):Promise<Message> {
-    const numOfPeople = Number(minPeopleInput);
+    numOfPeople: number
+  ): Promise<Message> {
     const message: any = await interaction.client.rest.post(
       Routes.channelMessages(String(process.env.THREAD_CHANNEL_ID)),
       {
