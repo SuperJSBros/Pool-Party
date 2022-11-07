@@ -19,6 +19,7 @@ class OrganiserRepository {
             ${1})
           RETURNING id;`
       );
+      console.log(`New organiser added successfully. DB id: ${result.rows[0]?.id}`);
     }
     const organiserId: number = result.rows[0]?.id;
     return Promise.resolve(organiserId);
