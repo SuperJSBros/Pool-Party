@@ -1,5 +1,5 @@
 # Use official pre-build image ver 16
-FROM node:16
+FROM node:16-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -16,6 +16,10 @@ RUN npm install
 # Copy rest of the files (index.ts, etc)
 COPY . .
 
-#Run commande
-CMD [ "npm", "start" ]
+
+#  CONFIG DATABASE
+RUN apk add postgresql-client
+COPY init.sh /usr/src/app
+ENTRYPOINT []
+
 

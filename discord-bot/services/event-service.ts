@@ -2,6 +2,8 @@ import {
   ActionRowBuilder,
   CommandInteraction,
   EmbedBuilder,
+  GuildScheduledEvent,
+  Message,
   ModalActionRowComponentBuilder,
   ModalBuilder,
   ModalSubmitInteraction,
@@ -9,6 +11,7 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
+import { eventRepository } from "../repository/event-repository";
 
 class EventService {
   private _modalReference = {
@@ -224,16 +227,21 @@ class EventService {
       eventStartDate,
       eventDescription
     );
-    await this.postMsgAndThread(
+    const message = await this.postMsgAndThread(
       interaction,
       requester,
       eventDescription,
       eventName,
-      minPeopleInput
+      Number(minPeopleInput)
     );
-
-    // TODO: use postgresql here
-    console.log(event);
+    // create db event
+    eventRepository.createEvent(
+      event,
+      Number(minPeopleInput),
+      eventStartDate,
+      interaction.user,
+      message.id
+    );
   }
 
   private async postEvent(
@@ -241,8 +249,8 @@ class EventService {
     eventName: string,
     eventStartDate: Date,
     eventDescription: string
-  ) {
-    return await interaction.client.rest.post(
+  ): Promise<GuildScheduledEvent> {
+    return (await interaction.client.rest.post(
       Routes.guildScheduledEvents(String(process.env.SERVER_ID)),
       {
         body: {
@@ -254,7 +262,7 @@ class EventService {
           entity_type: 2,
         },
       }
-    );
+    )) as Promise<GuildScheduledEvent>;
   }
 
   private async postMsgAndThread(
@@ -262,9 +270,8 @@ class EventService {
     requester: string,
     eventDescription: string,
     eventName: string,
-    minPeopleInput: string
-  ) {
-    const numOfPeople = Number(minPeopleInput);
+    numOfPeople: number
+  ): Promise<Message> {
     const message: any = await interaction.client.rest.post(
       Routes.channelMessages(String(process.env.THREAD_CHANNEL_ID)),
       {
@@ -292,7 +299,9 @@ class EventService {
         },
       }
     );
+    return message;
   }
+
   private createDateFromInputs(dateInput: string, timeInput: string): Date {
     const dateStr = dateInput.split("/").reverse().join("-"); // convert to accepted format
     const timeStr = timeInput

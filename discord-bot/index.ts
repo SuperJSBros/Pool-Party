@@ -1,8 +1,9 @@
 import { Client, GatewayIntentBits, Interaction } from "discord.js";
 import * as dotenv from "dotenv";
-import { eventService } from "./services/event-service";
+import { postgress } from "./db/postgress";
+import { eventRepository } from "./repository/event-repository";
 import { commandService } from "./services/command-service";
-
+import { eventService } from "./services/event-service";
 // init dotenv config
 dotenv.config({ path: __dirname + "/.env" });
 
@@ -23,15 +24,14 @@ const client = new Client({
 // *********************
 // Subscribe to events
 // *********************
-client.once("ready", async (currClient:Client) => {
+client.once("ready", async (currClient: Client) => {
   console.log("Pool-part bot is online");
-  const commands = await commandService.createAndUpdateCommands(
-    currClient
-  );
+  const commands = await commandService.createAndUpdateCommands(currClient);
+  postgress.initDbConnection();
   console.log("Current commands", commands);
 });
 
-client.on("interactionCreate", async (interaction:Interaction) => {
+client.on("interactionCreate", async (interaction: Interaction) => {
   if (interaction.isModalSubmit()) {
     await eventService.handleEventFormSubmission(interaction);
   } else if (

@@ -3,10 +3,17 @@ services:
 
   discord-bot:
     container_name: pool-party-bot
+    depends_on:
+      - db
     build: discord-bot
+    environment:
+      - PGHOST=${POSTGRES_HOST}
+      - PGUSER=${POSTGRES_USER}
+      - PGPASSWORD=${POSTGRES_PW}
+      - PGDATABASE=${POSTGRES_DB}
     volumes:
       - '.env:/usr/src/app/.env'
-    #command: npm start  #commande moved to Dockerfile
+    command: sh -c "/usr/src/app/init.sh && npm start" #run init script and start bot
 
   db:
     container_name: postgres
@@ -17,6 +24,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB} #optional (specify default database instead of $POSTGRES_DB)
     volumes:
       - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     restart: always
 
   pgadmin:
@@ -25,12 +34,16 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    volumes:
+      - pgadmin-data:/pgadmin4/servers.json  #save server list
     ports:
       - "5050:80"
     restart: always
 
 volumes:
   db-data:
+    driver: local
+  pgadmin-data:
     driver: local
 
 
