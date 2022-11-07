@@ -1,4 +1,4 @@
-import { GuildScheduledEvent } from "discord.js";
+import { GuildScheduledEvent, User } from "discord.js";
 import { Client } from "pg";
 
 class EventRepository {
@@ -31,24 +31,27 @@ class EventRepository {
       .catch((e) => console.error(e));
   }
 
-  public createEvent(
+  public async createEvent(
     event:GuildScheduledEvent,
     minPeopleInput: string,
     eventStartDate: Date,
-    userId: string,
+    user: User,
     messageId: string
   ) {
+
+   const organiserId = await this.getOrganiserDBId(user)
+
     this.dbClient
       .query(
         `
-    INSERT INTO public."Event"(
-      "EventID",
-      "EventName",
-      "Description",
-      "MinPeople",
-      "StartTime",
-      "OrganizerID",
-      "MessageID"
+    INSERT INTO public.event (
+      "event_discord_ref",
+      "event_name",
+      "event_desc",
+      "event_min_ppl",
+      "event_start",
+      "message_discord_ref",
+      "organiser_id"
       )
       VALUES(
         ${event.id},
@@ -56,13 +59,38 @@ class EventRepository {
         '${event.description}',
         ${minPeopleInput},
         '${eventStartDate.toISOString()}',
-        ${userId},
-        ${messageId});`
+        ${messageId},
+        ${organiserId});`
       )
       .then((result) => {
         console.log(result);
       });
   }
+
+  private async getOrganiserDBId(user:User):Promise<number> {
+    let result = await this.dbClient.query(`SELECT * FROM public.organiser
+    WHERE organiser_discord_ref = ${user.id}`);
+    if(!result.rows[0]){
+      result = await  this.dbClient
+      .query(
+        `
+    INSERT INTO public.organiser (
+      "organiser_name",
+      "organiser_discord_ref",
+      "organiser_reputation"
+      )
+      VALUES(
+        '${user.username}',
+        ${user.id},
+        ${1})
+      RETURNING id;`
+      );
+    }
+    const organiserId:number = result.rows[0]?.id
+    return Promise.resolve(organiserId);
+  }
 }
 
 export const eventRepository: EventRepository = new EventRepository();
+
+

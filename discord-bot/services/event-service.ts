@@ -235,7 +235,7 @@ class EventService {
       minPeopleInput
     );
     // create db event
-    eventRepository.createEvent(event, minPeopleInput, eventStartDate, interaction.user.id, message.id);
+    eventRepository.createEvent(event, minPeopleInput, eventStartDate, interaction.user, message.id);
   }
 
 
