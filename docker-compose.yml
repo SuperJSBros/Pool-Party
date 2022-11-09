@@ -11,6 +11,7 @@ services:
       - PGUSER=${POSTGRES_USER}
       - PGPASSWORD=${POSTGRES_PW}
       - PGDATABASE=${POSTGRES_DB}
+      - TZ=America/Toronto
     volumes:
       - '.env:/usr/src/app/.env'
     command: sh -c "/usr/src/app/init.sh && npm start" #run init script and start bot
@@ -22,6 +23,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PW}
       - POSTGRES_DB=${POSTGRES_DB} #optional (specify default database instead of $POSTGRES_DB)
+      - TZ=America/Toronto
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
@@ -34,6 +36,7 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+      - TZ=America/Toronto
     volumes:
       - pgadmin-data:/pgadmin4/servers.json  #save server list
     ports:
