@@ -1,5 +1,6 @@
 # Use official pre-build image ver 16
-FROM node:16
+FROM node:16-alpine
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -12,8 +13,13 @@ RUN npm install
 # If you are building your code for production
 # RUN npm ci --only=production
 
-# Bundle app source
+# Copy rest of the files (index.ts, etc)
 COPY . .
 
-#Run commande
-CMD [ "node", "index.js" ]
+
+#  CONFIG DATABASE
+RUN apk add postgresql-client
+COPY init.sh /usr/src/app
+ENTRYPOINT []
+
+

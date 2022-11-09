@@ -1,0 +1,32 @@
+{
+  "name": "pool-party-bot",
+  "version": "0.1",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "wincho:test": "node wincho-bot-log-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuperJSBros/Pool-Party.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SuperJSBros/Pool-Party/issues"
+  },
+  "homepage": "https://github.com/SuperJSBros/Pool-Party#readme",
+  "dependencies": {
+    "@types/pg": "^8.6.5",
+    "discord.js": "14.5.0",
+    "dotenv": "^16.0.0",
+    "pg": "^8.8.0",
+    "superagent": "^8.0.0",
+    "ts-node": "^10.9.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "@types/superagent": "^4.1.15"
+  }
+}
