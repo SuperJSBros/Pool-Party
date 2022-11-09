@@ -64,6 +64,7 @@ class EventService {
                 .setColor("Green")
                 .setDescription("Your submission was received successfully!"),
             ],
+            ephemeral: true
           });
         } catch (e: any) {
           console.error(e.message);
@@ -75,6 +76,7 @@ class EventService {
                   `Something went wrong during your submission, please try again later`
                 ),
             ],
+            ephemeral: true
           });
         }
       }
