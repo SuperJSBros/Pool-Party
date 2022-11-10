@@ -20,6 +20,7 @@ COPY . .
 #  CONFIG DATABASE
 RUN apk add postgresql-client
 COPY init.sh /usr/src/app
+RUN chmod 755 /usr/src/app/init.sh
 ENTRYPOINT []
 
 
