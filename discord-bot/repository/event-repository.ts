@@ -1,16 +1,14 @@
 import { GuildScheduledEvent, User } from "discord.js";
 import { postgress } from "../db/postgress";
-import { organiserRepository } from "./organiser-repository";
 
 class EventRepository {
   public async createEvent(
     event: GuildScheduledEvent,
     minPeopleInput: number,
     eventStartDate: Date,
-    user: User,
-    messageId: string
+    messageId: string,
+    organiserDbId:number
   ) {
-    const organiserId = await organiserRepository.getOrganiserDBId(user);
     postgress.dbClient
       .query(
         `
@@ -30,7 +28,7 @@ class EventRepository {
         ${minPeopleInput},
         '${eventStartDate.toISOString()}',
         ${messageId},
-        ${organiserId})
+        ${organiserDbId})
         RETURNING id;`
       )
       .then((result) => {

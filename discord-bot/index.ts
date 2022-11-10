@@ -1,7 +1,6 @@
 import { Client, GatewayIntentBits, Interaction } from "discord.js";
 import * as dotenv from "dotenv";
 import { postgress } from "./db/postgress";
-import { eventRepository } from "./repository/event-repository";
 import { commandService } from "./services/command-service";
 import { eventService } from "./services/event-service";
 // init dotenv config
@@ -33,16 +32,14 @@ client.once("ready", async (currClient: Client) => {
 
 client.on("interactionCreate", async (interaction: Interaction) => {
   if (interaction.isModalSubmit()) {
-    await eventService.handleEventFormSubmission(interaction);
+    eventService.handleEventFormSubmission(interaction);
   } else if (
     interaction.isChatInputCommand() &&
     interaction.commandName === "create-event"
   ) {
-    try {
-      await eventService.showEventSubmissionForm(interaction);
-    } catch (err: any) {
-      console.error(err);
-    }
+    eventService
+      .showEventSubmissionForm(interaction)
+      .catch((err) => console.error(err));
   }
 });
 

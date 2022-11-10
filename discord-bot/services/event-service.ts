@@ -9,9 +9,10 @@ import {
   ModalSubmitInteraction,
   Routes,
   TextInputBuilder,
-  TextInputStyle,
+  TextInputStyle
 } from "discord.js";
 import { eventRepository } from "../repository/event-repository";
+import { organiserRepository } from "../repository/organiser-repository";
 
 class EventService {
   private _modalReference = {
@@ -30,6 +31,7 @@ class EventService {
   public async showEventSubmissionForm(
     interaction: CommandInteraction
   ): Promise<void> {
+    if(!(await this.isValidEventOrganiser(interaction))) return;
     const eventModal = this.createEventRequestForm();
     await interaction.showModal(eventModal);
   }
@@ -53,6 +55,7 @@ class EventService {
                 `Your submission contains errors: ${errors.join(", ")}`
               ),
           ],
+          ephemeral: true
         });
       } else {
         try {
@@ -82,6 +85,31 @@ class EventService {
       }
     }
   }
+
+  private async isValidEventOrganiser(
+    interaction: CommandInteraction
+  ): Promise<boolean> {
+    let result = await organiserRepository.getOrganiser(interaction.user);
+    if (!result.rows[0]) {
+      result = await organiserRepository.insertOrganiser(interaction.user);
+      console.log(`New organiser added successfully. DB id: ${result.rows[0]?.id}`);
+    }
+    const isValid = result.rows[0]?.organiser_reputation >= 5
+    if(!isValid){
+      await interaction.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor("Red")
+            .setDescription(
+              `${interaction.user.username} cannot create an event. Please contact your administrator`
+            ),
+        ],
+        ephemeral: true
+      });
+    }
+    return isValid;
+  }
+
 
   private validateEventFormInputs(
     interaction: ModalSubmitInteraction
@@ -237,12 +265,13 @@ class EventService {
       Number(minPeopleInput)
     );
     // create db event
+    const organiserDbId = await organiserRepository.getOrganiserDBId(interaction.user);
     eventRepository.createEvent(
       event,
       Number(minPeopleInput),
       eventStartDate,
-      interaction.user,
-      message.id
+      message.id,
+      organiserDbId
     );
   }
 
