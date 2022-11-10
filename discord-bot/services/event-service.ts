@@ -55,6 +55,7 @@ class EventService {
                 `Your submission contains errors: ${errors.join(", ")}`
               ),
           ],
+          ephemeral: true
         });
       } else {
         try {
