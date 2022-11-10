@@ -18,7 +18,7 @@ class OrganiserRepository {
         WHERE organiser_discord_ref = ${user.id}`);
   }
 
-  private async insertOrganiser(user: User):Promise<QueryResult> {
+  public async insertOrganiser(user: User):Promise<QueryResult> {
     return await postgress.dbClient.query(
       `
         INSERT INTO public.organiser (

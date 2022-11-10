@@ -88,7 +88,11 @@ class EventService {
   private async isValidEventOrganiser(
     interaction: CommandInteraction
   ): Promise<boolean> {
-    const result = await organiserRepository.getOrganiser(interaction.user);
+    let result = await organiserRepository.getOrganiser(interaction.user);
+    if (!result.rows[0]) {
+      result = await organiserRepository.insertOrganiser(interaction.user);
+      console.log(`New organiser added successfully. DB id: ${result.rows[0]?.id}`);
+    }
     const isValid = result.rows[0]?.organiser_reputation >= 5
     if(!isValid){
       await interaction.reply({

@@ -1,7 +1,6 @@
 import { Client, GatewayIntentBits, Interaction } from "discord.js";
 import * as dotenv from "dotenv";
 import { postgress } from "./db/postgress";
-import { eventRepository } from "./repository/event-repository";
 import { commandService } from "./services/command-service";
 import { eventService } from "./services/event-service";
 // init dotenv config
