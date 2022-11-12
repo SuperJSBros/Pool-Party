@@ -4,8 +4,9 @@ import { postgress } from "./db/postgress";
 import { eventRepository } from "./repository/event-repository";
 import { commandService } from "./services/command-service";
 import { eventService } from "./services/event-service";
+import * as path from 'path';
 // init dotenv config
-dotenv.config({ path: __dirname + "/.env" });
+dotenv.config({ path: path.join(__dirname,".env") });
 
 // create new discord client with permission
 const client = new Client({
