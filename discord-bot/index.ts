@@ -33,18 +33,37 @@ client.once("ready", async (currClient: Client) => {
 });
 
 client.on("interactionCreate", async (interaction: Interaction) => {
+  // if (interaction.isModalSubmit()) {
+  //   await eventService.handleEventFormSubmission(interaction);
+  // } else if (
+  //   interaction.isChatInputCommand() &&
+  //   interaction.commandName === "create-event"
+  // ) {
+  //   try {
+  //     await eventService.showEventSubmissionForm(interaction);
+  //   } catch (err: any) {
+  //     console.error(err);
+  //   }
+  // }
   if (interaction.isModalSubmit()) {
-    await eventService.handleEventFormSubmission(interaction);
-  } else if (
-    interaction.isChatInputCommand() &&
-    interaction.commandName === "create-event"
-  ) {
-    try {
-      await eventService.showEventSubmissionForm(interaction);
-    } catch (err: any) {
-      console.error(err);
-    }
+      await eventService.handleEventFormSubmission(interaction);
+  } else if (interaction.isChatInputCommand()) {
+      try {
+          switch (interaction.commandName) {
+              case "create-event":
+                  console.log("command: create event");
+                  break;
+              case "list-event":
+                  console.log("command: list event");
+                  break;
+              default:
+                  console.log("no matching command");
+          }
+      } catch (err: any) {
+          console.error(err);
+      }
   }
+
 });
 
 client.login(process.env.BOT_TOKEN);
