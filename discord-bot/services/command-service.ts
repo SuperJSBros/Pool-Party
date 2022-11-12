@@ -17,6 +17,10 @@ class CommandService {
         const createEventCommand = new SlashCommandBuilder()
             .setName("create-event")
             .setDescription("Creates an event with and chat thread");
+        
+        const listEventCommand = new SlashCommandBuilder()
+            .setName("list-event")
+            .setDescription("Show upcoming events");
 
         // create / update command
         const commands: APIApplicationCommand[] = (await currClient.rest.put(
@@ -24,7 +28,7 @@ class CommandService {
                 currClient.application.id,
                 String(process.env.SERVER_ID) // copied server id
             ),
-            { body: [createEventCommand.toJSON()] }
+            { body: [createEventCommand.toJSON(), listEventCommand.toJSON()] }
         )) as APIApplicationCommand[];
 
         return commands;
