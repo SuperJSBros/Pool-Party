@@ -4,7 +4,7 @@ import { postgress } from "./db/postgress";
 import { eventRepository } from "./repository/event-repository";
 import { commandService } from "./services/command-service";
 import { eventService } from "./services/event-service";
-import { displayService } from "./services/display-service";
+import { updaterService } from "./services/updater-service";
 import * as path from "path";
 // init dotenv config
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -46,7 +46,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
                     break;
                 case "list-event":
                     console.log("command: list event");
-                    await displayService.listEvent();
+                    await updaterService.listEvent();
                     break;
                 default:
                     console.log("no matching command");

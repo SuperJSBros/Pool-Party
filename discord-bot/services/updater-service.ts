@@ -6,7 +6,7 @@ import { postgress } from "../db/postgress";
  *
  */
 
-class DisplayService {
+class UpdaterService {
     public listEvent() {
         console.log("Upcoming event are : ...");
         this.readDatabase();
@@ -29,4 +29,4 @@ class DisplayService {
     }
 }
 
-export const displayService: DisplayService = new DisplayService();
+export const updaterService: UpdaterService = new UpdaterService();
