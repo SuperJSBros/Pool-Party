@@ -1,18 +1,6 @@
 import { rejects } from "assert"
 import { postgress } from "../db/postgress"
-import {
-    ActionRowBuilder,
-    CommandInteraction,
-    EmbedBuilder,
-    GuildScheduledEvent,
-    Message,
-    ModalActionRowComponentBuilder,
-    ModalBuilder,
-    ModalSubmitInteraction,
-    Routes,
-    TextInputBuilder,
-    TextInputStyle,
-  } from "discord.js";
+import {EmbedBuilder } from "discord.js";
 
 /**
  * Query database for information to display in the CLI
@@ -22,16 +10,7 @@ import {
 class UpdaterService {
     public listEvent(interaction: any) {
         console.log("Upcoming event are : ...")
-        interaction.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor("Orange")
-                    .setDescription(
-                        `LIST EVENT`
-                    ),
-            ],
-            ephemeral: true
-        });
+        this.interactionReply(interaction, "test");
         //this.readDatabase();
     }
 
@@ -49,6 +28,19 @@ class UpdaterService {
             //console.log(value);
         }
         return result;
+    }
+
+    //interaction reply of bot messages
+    private interactionReply(interaction: any, message: string){
+        interaction.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor("Orange")
+                    .setDescription(message),
+            ],
+            ephemeral: true
+        });
+
     }
 }
 
