@@ -1,5 +1,18 @@
-import { rejects } from "assert";
-import { postgress } from "../db/postgress";
+import { rejects } from "assert"
+import { postgress } from "../db/postgress"
+import {
+    ActionRowBuilder,
+    CommandInteraction,
+    EmbedBuilder,
+    GuildScheduledEvent,
+    Message,
+    ModalActionRowComponentBuilder,
+    ModalBuilder,
+    ModalSubmitInteraction,
+    Routes,
+    TextInputBuilder,
+    TextInputStyle,
+  } from "discord.js";
 
 /**
  * Query database for information to display in the CLI
@@ -7,9 +20,19 @@ import { postgress } from "../db/postgress";
  */
 
 class UpdaterService {
-    public listEvent() {
-        console.log("Upcoming event are : ...");
-        this.readDatabase();
+    public listEvent(interaction: any) {
+        console.log("Upcoming event are : ...")
+        interaction.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor("Orange")
+                    .setDescription(
+                        `LIST EVENT`
+                    ),
+            ],
+            ephemeral: true
+        });
+        //this.readDatabase();
     }
 
     private async readDatabase() {
@@ -20,13 +43,17 @@ class UpdaterService {
             WHERE event_start >= now()
             ORDER BY event_start ASC
             `
-        );
-        for(const [key, value] of Object.entries(result.rows)) {
-            console.log(`${key} and ${value.event_name}`);
+        )
+        for (const [key, value] of Object.entries(result.rows)) {
+            console.log(`${key} and ${value.event_name}`)
             //console.log(value);
         }
         return result;
     }
 }
 
-export const updaterService: UpdaterService = new UpdaterService();
+
+
+
+
+export const updaterService: UpdaterService = new UpdaterService()

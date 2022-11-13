@@ -46,7 +46,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
                     break;
                 case "list-event":
                     console.log("command: list event");
-                    await updaterService.listEvent();
+                    await updaterService.listEvent(interaction);
                     break;
                 default:
                     console.log("no matching command");
