@@ -31,13 +31,13 @@ class UpdaterService {
 
         let message: string = `There are ${result.rowCount} upcoming event(s) !\n`
         for (const [key, value] of Object.entries(result.rows)) {
-            console.log(`${key} : ${value.event_name}`)
+            console.log(`${key} is ${value.event_name} @ ${value.event_start}`)
             message = [
                 message,
                 "\n",
-                value.event_start.toISOString().substring(0, 10),
-                "@",
-                value.event_start.toISOString().substring(11, 16),
+                `${value.event_start.getFullYear()}/${value.event_start.getMonth()+1}/${value.event_start.getDate()}`,
+                ` @ `,
+                `${value.event_start.getHours()}:${value.event_start.getMinutes()}`,
                 " --> ",
                 `[${value.event_name}](https://discord.com/channels/${process.env.SERVER_ID}/${value.message_discord_ref})`,
                 "  by",
