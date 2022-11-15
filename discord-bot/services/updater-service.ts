@@ -38,7 +38,7 @@ class UpdaterService {
                 `${value.event_start.getFullYear()}/${value.event_start.getMonth()+1}/${value.event_start.getDate()}`,
                 ` @ `,
                 `${value.event_start.getHours()}:${value.event_start.getMinutes()}`,
-                " -> ",
+                "  ",
                 `[${value.event_name}](https://discord.com/channels/${process.env.SERVER_ID}/${value.message_discord_ref})`,
                 "  by",
                 organiser.rows[value.organiser_id - 1].organiser_name
