@@ -29,7 +29,8 @@ class UpdaterService {
             `
         );
 
-        let message: string = `There are ${result.rowCount} upcoming event(s) !\n`
+        let message: string = `There are ${result.rowCount} upcoming event(s) !`
+        if (result.rowCount === 0) message += ` 😥 \nPropose a new event by typing /create-event !`
         for (const [key, value] of Object.entries(result.rows)) {
             console.log(`${key} is ${value.event_name} @ ${value.event_start}`)
             message = [
