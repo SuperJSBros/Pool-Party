@@ -33,7 +33,7 @@ client.once("ready", async (currClient: Client) => {
     console.log("Current commands", commands)
 })
 
-client.on("interactionCreate", async (interaction: Interaction) => {
+client.on("interactionCreate", (interaction: Interaction) => {
     if (interaction.isModalSubmit()) {
         eventService.handleEventFormSubmission(interaction).catch(error=>console.error(error))
     } else if (interaction.isChatInputCommand()) {
