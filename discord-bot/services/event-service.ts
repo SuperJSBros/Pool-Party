@@ -13,7 +13,6 @@ import {
 } from "discord.js"
 import { eventRepository } from "../repository/event-repository"
 import { organiserRepository } from "../repository/organiser-repository"
-import { postgress } from "../db/postgress"
 import * as dotenv from "dotenv"
 import * as path from "path"
 // init dotenv config
@@ -33,7 +32,9 @@ class EventService {
      * This function displays the event submission form to the requester
      * @param interaction
      */
-    public async showEventSubmissionForm(interaction: CommandInteraction): Promise<void> {
+    public async showEventSubmissionForm(
+        interaction: CommandInteraction
+    ): Promise<void> {
         if (!(await this.isValidEventOrganiser(interaction))) return
         const eventModal = this.createEventRequestForm()
         await interaction.showModal(eventModal)
@@ -43,7 +44,9 @@ class EventService {
      * This function handles the submission of the event form
      * @param interaction
      */
-    public async handleEventFormSubmission(interaction: ModalSubmitInteraction): Promise<void> {
+    public async handleEventFormSubmission(
+        interaction: ModalSubmitInteraction
+    ): Promise<void> {
         if (interaction.customId === this._modalReference.modalId) {
             const errors = this.validateEventFormInputs(interaction)
             if (errors.length > 0) {
@@ -90,27 +93,14 @@ class EventService {
             }
         }
     }
+
     /**
      * This function Query db and return all upcoming events
      * @param interaction
      */
     public async listEvent(interaction: any): Promise<void> {
-        let result = await postgress.dbClient.query(
-            `
-      SELECT *
-      FROM public.event
-      WHERE event_start >= now()
-      ORDER BY event_start ASC
-      `
-        )
-        let organiser = await postgress.dbClient.query(
-            `
-      SELECT organiser_name 
-      FROM public.organiser
-      ORDER BY id ASC
-      `
-        )
-
+        const result = await eventRepository.getEvent()
+        const organiser = await organiserRepository.getOrganiserNameList()
         let message: string = `There are ${result.rowCount} upcoming event(s) !`
         if (result.rowCount === 0)
             message += ` 😥 \nPropose a new event by typing /create-event !`
