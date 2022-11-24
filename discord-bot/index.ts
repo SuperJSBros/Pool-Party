@@ -51,9 +51,9 @@ client.on("interactionCreate", (interaction: Interaction) => {
     }
 })
 
-client.on("guildScheduledEventUpdate",(event:GuildScheduledEvent<GuildScheduledEventStatus> | null) =>{
-    if(event){
-        // write code here
+client.on("guildScheduledEventUpdate",(oldEvent:GuildScheduledEvent<GuildScheduledEventStatus> | null,newEvent:GuildScheduledEvent<GuildScheduledEventStatus> ) =>{
+    if(newEvent){
+        eventService.updateEvent(newEvent);
     }
 })
 

@@ -99,7 +99,7 @@ class EventService {
      * @param interaction
      */
     public async listEvent(interaction: any): Promise<void> {
-        const result = await eventRepository.getEvent()
+        const result = await eventRepository.getEvents()
         const organiser = await organiserRepository.getOrganiserNameList()
         let message: string = `There are ${result.rowCount} upcoming event(s) !`
         if (result.rowCount === 0)
@@ -121,6 +121,14 @@ class EventService {
             ].join(" ")
         }
         this.interactionReply(interaction, message)
+    }
+
+    /**
+     * This function Query db and return all upcoming events
+     * @param guildScheduledEvent
+     */
+    public async updateEvent(guildScheduledEvent: GuildScheduledEvent): Promise<void> {
+        eventRepository.updateEvent(guildScheduledEvent);
     }
 
     private async isValidEventOrganiser(
