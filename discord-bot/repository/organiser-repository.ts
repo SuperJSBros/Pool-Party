@@ -17,28 +17,27 @@ class OrganiserRepository {
   /*
   ** This Method return the name/ID pair of all organiser
   */
-  public async getOrganiserNameList(){
-      let res = await postgress.dbClient.query({
+  public getOrganiserNameList():Promise<QueryResult> {
+      return postgress.dbClient.query({
         text: 
         `
         SELECT organiser_name 
         FROM public.organiser
         ORDER BY id ASC
         `,
-      })
-      return res
+      });
   }
 
   /*
   ** This Method search the DB using a given discord# number
   */
-  public async getOrganiser(user: User):Promise<QueryResult> {
-    return await postgress.dbClient.query(`SELECT * FROM public.organiser
+  public getOrganiser(user: User):Promise<QueryResult> {
+    return postgress.dbClient.query(`SELECT * FROM public.organiser
         WHERE organiser_discord_ref = ${user.id}`);
   }
 
-  public async insertOrganiser(user: User):Promise<QueryResult> {
-    return await postgress.dbClient.query(
+  public insertOrganiser(user: User):Promise<QueryResult> {
+    return postgress.dbClient.query(
       `
         INSERT INTO public.organiser (
           "organiser_name",
