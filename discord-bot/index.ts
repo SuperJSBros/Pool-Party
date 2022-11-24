@@ -3,7 +3,6 @@ import * as dotenv from "dotenv"
 import { postgress } from "./db/postgress"
 import { commandService } from "./services/command-service"
 import { eventService } from "./services/event-service"
-import { updaterService } from "./services/updater-service"
 import * as path from "path"
 import { error } from "console"
 // init dotenv config
@@ -44,7 +43,7 @@ client.on("interactionCreate", (interaction: Interaction) => {
                 break
             case "list-event":
                 console.log("command: list event")
-                updaterService.listEvent(interaction).catch(error=>console.error(error))
+                eventService.listEvent(interaction).catch(error=>console.error(error))
                 break
             default:
                 console.log("no matching command")
