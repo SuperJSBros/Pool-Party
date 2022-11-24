@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Interaction } from "discord.js"
+import { Client, GatewayIntentBits, GuildScheduledEvent, GuildScheduledEventStatus, Interaction, Partials } from "discord.js"
 import * as dotenv from "dotenv"
 import { postgress } from "./db/postgress"
 import { commandService } from "./services/command-service"
@@ -19,7 +19,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
     ],
-    // partials: [Partials.Message, Partials.Channel, Partials.Reaction], //add this section to get additional messages info ex: emoji reactions
+    partials: [Partials.GuildScheduledEvent], //add this section to get additional messages info ex: emoji reactions
 })
 
 // *********************
@@ -48,6 +48,12 @@ client.on("interactionCreate", (interaction: Interaction) => {
             default:
                 console.log("no matching command")
         }
+    }
+})
+
+client.on("guildScheduledEventUpdate",(oldEvent:GuildScheduledEvent<GuildScheduledEventStatus> | null,newEvent:GuildScheduledEvent<GuildScheduledEventStatus> ) =>{
+    if(newEvent){
+        eventService.updateEvent(newEvent);
     }
 })
 
